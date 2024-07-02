@@ -1,33 +1,63 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { getCourses } from "../services/api";
 
 function CourseSearch() {
-  const [searchTerm, setSearchTerm] = useState("");
   const [courses, setCourses] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleSearch = async () => {
+  useEffect(() => {
+    fetchCourses();
+  }, []);
+
+  const fetchCourses = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get(`/api/courses?search=${searchTerm}`);
-      setCourses(response.data);
-    } catch (error) {
-      console.error("Error searching courses:", error);
+      const data = await getCourses(searchTerm);
+      setCourses(data);
+      setError(null);
+    } catch (err) {
+      setError("Failed to fetch courses. Please try again.");
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    fetchCourses();
+  };
+
+  if (loading) return <div>Loading courses...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div>
       <h2>Course Search</h2>
-      <input
-        type="text"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-      <button onClick={handleSearch}>Search</button>
-      <ul>
-        {courses.map((course) => (
-          <li key={course.id}>{course.name}</li>
-        ))}
-      </ul>
+      <form onSubmit={handleSearch}>
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search for courses"
+        />
+        <button type="submit">Search</button>
+      </form>
+      {courses.length === 0 ? (
+        <p>No courses found.</p>
+      ) : (
+        <ul>
+          {courses.map((course) => (
+            <li key={course.id}>
+              <h3>{course.title}</h3>
+              <p>{course.description}</p>
+              <p>Instructor: {course.instructor.username}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

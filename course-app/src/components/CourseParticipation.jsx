@@ -1,28 +1,37 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { getEnrolledCourses } from "../services/api";
 
 function CourseParticipation() {
   const [enrolledCourses, setEnrolledCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchEnrolledCourses = async () => {
-      try {
-        const response = await axios.get("/api/enrolled-courses");
-        setEnrolledCourses(response.data);
-      } catch (error) {
-        console.error("Error fetching enrolled courses:", error);
-      }
-    };
-
     fetchEnrolledCourses();
   }, []);
+
+  const fetchEnrolledCourses = async () => {
+    try {
+      const data = await getEnrolledCourses();
+      setEnrolledCourses(data);
+    } catch (err) {
+      setError("Failed to fetch enrolled courses");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div>
       <h2>Course Participation</h2>
       <ul>
         {enrolledCourses.map((course) => (
-          <li key={course.id}>{course.name}</li>
+          <li key={course.id}>
+            {course.title} - {course.description}
+          </li>
         ))}
       </ul>
     </div>
