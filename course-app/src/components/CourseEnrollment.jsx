@@ -4,16 +4,19 @@ import { enrollCourse } from "../services/api";
 function CourseEnrollment() {
   const [courseId, setCourseId] = useState("");
   const [message, setMessage] = useState("");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   const handleEnroll = async (e) => {
     e.preventDefault();
+    setMessage("");
+    setError("");
+
     try {
       const response = await enrollCourse(courseId);
       setMessage(response.message);
       setCourseId("");
     } catch (err) {
-      setError("Failed to enroll in course");
+      setError(err.response?.data?.error || "Failed to enroll in the course");
     }
   };
 
@@ -22,14 +25,15 @@ function CourseEnrollment() {
       <h2>Course Enrollment</h2>
       <form onSubmit={handleEnroll}>
         <input
-          type="text"
+          type="number"
           value={courseId}
           onChange={(e) => setCourseId(e.target.value)}
           placeholder="Enter Course ID"
+          required
         />
         <button type="submit">Enroll</button>
       </form>
-      {message && <p>{message}</p>}
+      {message && <p style={{ color: "green" }}>{message}</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );

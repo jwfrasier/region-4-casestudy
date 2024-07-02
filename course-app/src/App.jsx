@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import CourseSearch from "./components/CourseSearch";
 import CourseEnrollment from "./components/CourseEnrollment";
 import CourseParticipation from "./components/CourseParticipation";
-
+import "./App.css";
 function App() {
   return (
     <Router>

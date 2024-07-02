@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getCourses } from "../services/api";
-
+import "./CourseSearch.css";
 function CourseSearch() {
   const [courses, setCourses] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,9 +34,9 @@ function CourseSearch() {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div>
-      <h2>Course Search</h2>
-      <form onSubmit={handleSearch}>
+    <div className="container">
+      <h1>Course Search</h1>
+      <form className="search-form" onSubmit={handleSearch}>
         <input
           type="text"
           value={searchTerm}
@@ -45,19 +45,18 @@ function CourseSearch() {
         />
         <button type="submit">Search</button>
       </form>
-      {courses.length === 0 ? (
-        <p>No courses found.</p>
-      ) : (
-        <ul>
-          {courses.map((course) => (
-            <li key={course.id}>
-              <h3>{course.title}</h3>
-              <p>{course.description}</p>
-              <p>Instructor: {course.instructor.username}</p>
-            </li>
-          ))}
-        </ul>
-      )}
+      <div className="course-list">
+        {courses.map((course) => (
+          <div key={course.id} className="course-item">
+            <h3>{course.title}</h3>
+            <p>{course.description}</p>
+            <p className="instructor">
+              Instructor: {course.instructor.username}
+            </p>
+            <button onClick={() => handleEnroll(course.id)}>Enroll</button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

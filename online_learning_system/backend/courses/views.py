@@ -1,11 +1,9 @@
-from django.http import HttpResponse
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Course, Enrollment
 from .serializers import CourseSerializer, EnrollmentSerializer
 
-# ... rest of your code ...
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
